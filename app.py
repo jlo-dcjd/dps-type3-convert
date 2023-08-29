@@ -97,6 +97,16 @@ if st.button('Process'):
     # Remove old files
     os.remove("Type3.txt")
     df = pd.read_csv('Type3_Finished.txt', delimiter=';')
+    st.dataframe(df)
+    csv = convert_df(df)
+
+    st.download_button(
+    label="Download data as CSV",
+    data=csv,
+    file_name='type3.csv',
+    mime='text/csv',
+)
+
     
     st.success("Processing completed!")
 
@@ -107,13 +117,7 @@ def convert_df(df):
     # IMPORTANT: Cache the conversion to prevent computation on every rerun
     return df.to_csv().encode('utf-8')
 
-csv = convert_df(df)
 
-st.download_button(
-    label="Download data as CSV",
-    data=csv,
-    file_name='type3.csv',
-    mime='text/csv',
-)
 
-st.dataframe(df)
+
+
