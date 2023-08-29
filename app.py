@@ -96,10 +96,11 @@ if st.button('Process'):
 
     # Remove old files
     os.remove("Type3.txt")
-
+    df = pd.read_csv('Type3_Finished.txt', delimiter=';')
+    
     st.success("Processing completed!")
 
-df = pd.read_csv('Type3_Finished.txt', delimiter=';')
+
 
 @st.cache
 def convert_df(df):
