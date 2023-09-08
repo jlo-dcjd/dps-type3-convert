@@ -3,7 +3,7 @@ import pandas as pd
 import os
 from io import StringIO
 
-st.title('Separate Re-Arrest Data Into Type3 File')
+st.title('DPS Re-Arrest Data Into Type3 File')
 
 # file_name = st.text_input('Enter the file name for the re-arrest file (DO NOT include .txt extension)', key='file_name')
 uploaded_file = st.file_uploader("Choose a file")
@@ -45,9 +45,7 @@ if uploaded_file is not None:
 
     delimiter_positions = [1, 9, 17, 18, 22, 30, 38, 84, 101, 103, 104, 107, 139, 147, 156, 157, 158, 159]
 
-    output_lines = []
-
-    output_lines.append("type;Sid;doa;seq_code;trs;doo;aon;aol;blank;lda;goc;adn;add;ada;prosec_ori;blank2;blank3;dm_viol;victim_age\n")
+    output_lines = ["type;Sid;doa;seq_code;trs;doo;aon;aol;blank;lda;goc;adn;add;ada;prosec_ori;blank2;blank3;dm_viol;victim_age\n"]
 
     for line in type3_lines:
         output_line = []
@@ -67,6 +65,7 @@ if uploaded_file is not None:
 
     # Create a Pandas DataFrame
     df = pd.DataFrame(data, columns=header.strip().split(';'))
+    df = df[['type', 'Sid', 'doa', 'doo', 'aon', 'aol', 'lda', 'ada', 'prosec_ori']]
 
     st.dataframe(df)
 
