@@ -5,7 +5,6 @@ from io import StringIO
 
 st.title('DPS Re-Arrest Data Into Type3 File')
 
-# file_name = st.text_input('Enter the file name for the re-arrest file (DO NOT include .txt extension)', key='file_name')
 uploaded_file = st.file_uploader("Choose a file")
 if uploaded_file is not None:
 
@@ -65,7 +64,24 @@ if uploaded_file is not None:
 
     # Create a Pandas DataFrame
     df = pd.DataFrame(data, columns=header.strip().split(';'))
-    df = df[['type', 'Sid', 'doa', 'doo', 'aon', 'aol', 'lda', 'ada', 'prosec_ori']]
+    df['aol_lookup'] = ''
+    df = df[['type', 'Sid', 'doa', 'doo', 'aon', 'aol', 'aol_lookup', 'lda', 'ada', 'prosec_ori']]
+    df['doa'] = pd.to_datetime(df['doa'], format='%Y%m%d', errors='coerce').dt.strftime('%m/%d/%Y')
+    df['doo'] = pd.to_datetime(df['doo'], format='%Y%m%d', errors='coerce').dt.strftime('%m/%d/%Y')
+    df['ada'] = pd.to_datetime(df['ada'], format='%Y%m%d', errors='coerce').dt.strftime('%m/%d/%Y')
+
+    # add missing offense descriptions
+    tjjd = pd.read_excel('TJJD_OffenseCodes.xlsx', converters={'OffenseCode': str, 'TJPCCategory': str, 'TJPCAttemptedCategory': str})
+
+    for index, row in df.iterrows():
+        aon_value = row['aon']
+
+        # Search for matching 'OffenseCode' in tjjd
+        matching_row = tjjd[tjjd['OffenseCode'] == aon_value]
+
+        # If a match is found, update 'aol' with 'OffenseDescription'
+        if not matching_row.empty:
+            df.at[index, 'aol_lookup'] = matching_row['OffenseDescription'].iloc[0]
 
     st.dataframe(df)
 
